@@ -1,6 +1,9 @@
 import socket
 import traceback
 from threading import Thread
+
+import time
+
 import Parser
 import sys
 
@@ -24,7 +27,6 @@ class Client:
         while self.isActive:
             data = Parser.receiveFrame(self.connection)
             userName, msgTime, msgText, flagsArray = Parser.parseInput(data)  # Calling the parser
-            userName, msgTime, msgText, flagsArray = Parser.parseInput(data)  # Calling the parser
 
             if any("time" == s for s in flagsArray):
                 self.sendMessage(frame=Parser.createFrame("server", "real time to return"))
@@ -33,7 +35,8 @@ class Client:
             if any("count" == s for s in flagsArray):
                 self.sendMessage(frame=Parser.createFrame("server", "there is "+str(len(buffer))+" messages in the buffer"))
             if any("new" == s for s in flagsArray):
-                self.broadcast(Parser.createFrame("server", userName + " has join the chat"))
+                self.broadcast(frame=Parser.createFrame("server", userName + " has join the chat"))
+                #time.sleep(2)
                 self.username = userName
                 for f in buffer:
                     self.sendMessage(frame=f)
@@ -42,7 +45,6 @@ class Client:
                 for c in clientsArray:
                     if c != self:
                         str += c.username+",  "
-                print(str)
                 self.sendMessage(frame=Parser.createFrame("server", str))
             if any("quit" == s for s in flagsArray):
                 self.isActive = False

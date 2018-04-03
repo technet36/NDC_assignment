@@ -67,4 +67,5 @@ def receiveFrame(connection):
     sizeFrame = connection.recv(13)
     dataSize = get("s", sizeFrame)
     size = int(dataSize)
-    return sizeFrame+connection.recv(size)
+    myFrame = sizeFrame+connection.recv(size)
+    return myFrame

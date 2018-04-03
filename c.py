@@ -29,8 +29,8 @@ text = Parser.createFrame(name, "@new")
 s.sendall(text)
 
 isActive = True
+Thread(target=receptionThread, args=(s, "toto")).start()
 while isActive:
-    Thread(target=receptionThread, args=(s, "toto")).start()
 
     print "msg :"
     userInput = raw_input()
