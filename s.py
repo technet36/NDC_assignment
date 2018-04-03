@@ -33,31 +33,34 @@ class Client:
             if any("ping" == s for s in flagsArray):
                 self.sendMessage(frame=Parser.createFrame("server", "pong"))
             if any("count" == s for s in flagsArray):
-                self.sendMessage(frame=Parser.createFrame("server", "there is "+str(len(buffer))+" messages in the buffer"))
+                i = len(buffer)
+                self.sendMessage(
+                    frame=Parser.createFrame("server", "there is " + str(len(buffer)) + " messages in the buffer"))
             if any("new" == s for s in flagsArray):
                 self.broadcast(frame=Parser.createFrame("server", userName + " has join the chat"))
-                #time.sleep(2)
+                # time.sleep(2)
                 self.username = userName
                 for f in buffer:
                     self.sendMessage(frame=f)
             if any("who" == s for s in flagsArray):
-                str = "Online :"
+                onlineList = "Online :"
                 for c in clientsArray:
                     if c != self:
-                        str += c.username+",  "
-                self.sendMessage(frame=Parser.createFrame("server", str))
+                        onlineList += c.username + ",  "
+                self.sendMessage(frame=Parser.createFrame("server", onlineList))
             if any("quit" == s for s in flagsArray):
                 self.isActive = False
-                self.broadcast(Parser.createFrame("server", userName + " join has left the chat : " + msgText))
+                self.broadcast(Parser.createFrame("server", userName + " has left the chat : " + msgText))
                 clientsArray.remove(self)
                 self.sendMessage(frame=Parser.createFrame("server", "@exit"))
             if flagsArray == ['']:
                 buffer.append(data)
                 self.broadcast(data)
-            else:
+            else:  # for @username
                 for f in flagsArray:
-                    if any(f == c.username for c in clientsArray):
-                        c.sendMessage(data)
+                    for c in clientsArray:
+                        if f == c.username:
+                            c.sendMessage(data)
             print("from " + userName + " at " + msgTime + " :")
             print("\t" + msgText)
 
